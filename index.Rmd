@@ -1,5 +1,5 @@
 ---
-title: "test_page"
+title: "index"
 author: "Jacob Barnett"
 date: "November 10, 2020"
 output: html_document
@@ -12,6 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 Hello, this is Jake's test.
 
 # BIG Header
+
+Here is the [link to the readme page](test_page.html)
+
 
 ## Header 1
 
