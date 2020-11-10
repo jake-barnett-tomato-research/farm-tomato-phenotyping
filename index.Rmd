@@ -16,7 +16,15 @@ Hello, this is Jake's test.
 Here is the [link to the readme page](test_page.html)
 
 
-## Header 1
+## Header 1 - a picture 
+Here is a picture </br>
+<center> <img src = "sl-ac-b-05-400dpi.tif" width = "50%"> </center>
+
+![Ailsa Craig photo](sl-ac-b-05-400dpi.tif)
+
+
+
+
 
 ### Smaller header
 
