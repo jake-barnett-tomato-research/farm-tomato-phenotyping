@@ -27,6 +27,7 @@ Here is a picture </br>
 
 
 ### Smaller header
+Link to [Alison's page](https://aefowler.github.io/website/index.html)
 
 Here is a code chunk.
 ```{r}
