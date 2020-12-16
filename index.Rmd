@@ -20,7 +20,7 @@ Here is the [link to the readme page](test_page.html)
 Here is a picture </br>
 <center> <img src = "sl-ac-b-05-400dpi.tif" width = "50%"> </center>
 
-![Ailsa Craig photo](sl-ac-b-05-400dpi.tif)
+![Wild tomatoes photo](wild_tomatoes.jpg)
 
 
 
