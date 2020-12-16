@@ -1,0 +1,205 @@
+---
+title: "fruit_data_plots_2020"
+author: "Jacob Barnett"
+date: "December 15, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exploratory plots of summer 2020 wild tomato fruit trait data
+
+### Pericarp thickness plots
+
+First, load packages, import data, and create objects for species color and accessions listed in phylogenetic order. 
+```{r}
+# use pacman to load packages
+pacman::p_load(tidyverse, tidyr, ggrepel, ggpubr)
+
+# import csv file with 2020 data, all measurements as of 12/15
+data_all <- read.csv("data_2020farm_allfruits_updated_2020-12-15.csv", header=T, stringsAsFactors = F)
+# create a new data frame with only the fruits marked "include"
+data_include <- data_all[data_all$Include_in_analysis=="include", ]
+# create another data frame from that one with only ripe fruits
+data_include_ripes <- data_include[data_include$Ripeness=="ripe", ]
+# check that all accessions were included (should be 41 accessions, 14 species x 3 except only 2 accessions for SCH)
+length(unique(data_include_ripes$Sp_ac))
+
+# create object with colors for each species
+default_colors_14_phylo = c(
+                            "SPE"="#9590FF", 
+                            "SH"="#39B600", 
+                            "SCH"="#CFE11CFF", 
+                            "SCR"="#00BCD8", 
+                            "SPV"="#FF62B6",
+                            "SHY"="#C99800", 
+                            "SN"="#00B0F6", 
+                            "SA"="seagreen4", 
+                            "SCM"="#D89000", 
+                            "SPM"="#E76BF3", 
+                            "SLC"="#00BFC4",
+                            "SL"="#00BF7D", 
+                            "SG"="#A3A500", 
+                            "SC"="#F8766D")
+# create object with 2020 accessions listed in reverse phylogenetic order
+acc_phylo_order <- c("SPE-21", "SPE-20", "SPE-16",
+                         "SH-05", "SH-02", "SH-01",
+                         "SCH-08", "SCH-06",
+                         "SCR-09", "SCR-08", "SCR-07",
+                         "SPV-09", "SPV-04", "SPV-02",
+                         "SHY-03", "SHY-02", "SHY-01",
+                         "SN-08", "SN-06", "SN-02",
+                         "SA-18", "SA-09", "SA-05",
+                         "SCM-11", "SCM-03", "SCM-01",
+                         "SPM-B6", "SPM-B5", "SPM-01",
+                         "SLC-B8", "SLC-B5", "SLC-10",
+                         "SL-SK", "SL-GD", "SL-AC",
+                         "SG-30", "SG-23", "SG-15",
+                         "SC-31", "SC-22", "SC-19"
+)
+
+```
+
+Next create a function to create a boxplot by accession for a given variable:
+```{r}
+boxplot_by_acc_fun <-function(data_temp, .y_var) {
+  # convert strings to variables
+  #x_var <- sym(.x_var)
+  y_var <- sym(.y_var)
+  # unquote variables using !!
+  
+  data_temp %>%
+    # order the accessions list phylogenetically
+    dplyr::mutate(Sp_ac = factor(Sp_ac,
+                                 levels = acc_phylo_order)) %>%
+    # unquote variables using !!
+    ggplot(aes(x=Sp_ac, y= !! y_var)) + 
+    geom_boxplot() +
+    geom_jitter(aes(color=Species, shape=Rep), size=2) +
+    scale_shape_manual(values=c(16,9,8)) +
+    scale_color_manual(values = default_colors_14_phylo) +
+    coord_flip() +
+    # remove the legend from the side
+    theme(legend.position="none") +
+    # align the caption to the left side of the graph with hjust = 0
+    theme(plot.caption = element_text(hjust =0)) +
+    labs(caption = "Colored points represent individual fruits; 
+                    shapes represent different replicates (plants)." 
+                  ) 
+}
+```
+
+Then give the function a data frame and a variable to plot.
+Note that you can change y_var whenever you want to plot a different variable. 
+```{r}
+data_temp <- data_include_ripes
+y_var <- "Tomato.Pericarp.Thickness.Ratio_inside"
+
+# feed the function with the chosen variable and call the resulting plot "boxplot"
+boxplot <- boxplot_by_acc_fun(data_temp, y_var)
+# add a title to the plot if desired
+boxplot <- boxplot +
+  ggtitle("Summer 2020 data - updated 15 Dec 2020")
+```
+
+Now view the plot
+
+```{r, echo=FALSE}
+boxplot
+```
+
+
+Next make a plot of the 2019 data for comparison.
+
+```{r}
+# import 2019 data
+data2019 <- read.csv("data_2019farm_allfruits_updated_2020-04-06.csv", header=T, stringsAsFactors = F)
+# create object with colors for each species
+unique(data2019$species)
+default_colors_10_phylo2019 = c(
+  "SPE"="#9590FF", 
+  "SH"="#39B600", 
+  "SPV"="#FF62B6",
+  "SN"="#00B0F6", 
+  "SCM"="#D89000", 
+  "SPM"="#E76BF3", 
+  "SLC"="#00BFC4",
+  "SL"="#00BF7D", 
+  "SG"="#A3A500", 
+  "SC"="#F8766D")
+# create object with accessions listed in reverse phylogenetic order
+unique(data2019$accession)
+acc_phylo_order2019 <- c("SPE-21", "SPE-20", "SPE-19", "SPE-16",
+                     "SH-12", "SH-5", "SH-1",
+                     "SCR-09", "SCR-08", "SCR-07",
+                     "SPV-11", "SPV-9", "SPV-4", "SPV-2",
+                     "SN-16", "SN-8", "SN-6", "SN-2",
+                     "SCM-11", "SCM-9", "SCM-3", "SCM-1",
+                     "SPM-B61", "SPM-B53", "SPM-10", "SPM-1",
+                     "SLC-B89", "SLC-B59", "SLC-B01", "SLC-10",
+                     "SL-SAK", "SL-B62", 
+                     "SG-30", "SG-29", "SG-23", "SG-15",
+                     "SC-42", "SC-31", "SC-22", "SC-19"
+)
+
+
+# create a function to plot the 2019 fruit trait data
+boxplot_by_acc_fun2019 <-function(data_temp2019, .y_var2019) {
+  # convert strings to variables
+  #x_var <- sym(.x_var)
+  y_var2019 <- sym(.y_var2019)
+  # unquote variables using !!
+  
+  data_temp2019 %>%
+    # order the accessions list phylogenetically
+    dplyr::mutate(accession = factor(accession,
+                                 levels = acc_phylo_order2019)) %>%
+    # unquote variables using !!
+    ggplot(aes(x=accession, y= !! y_var2019)) + 
+    geom_boxplot() +
+    geom_jitter(aes(color=species, shape=bed), size=2) +
+    scale_shape_manual(values=c(16,9,8)) +
+    scale_color_manual(values = default_colors_10_phylo2019) +
+    coord_flip() +
+    # remove the legend from the side
+    theme(legend.position="none") +
+    # align the caption to the left side of the graph with hjust = 0
+    theme(plot.caption = element_text(hjust =0)) +
+    labs(caption = "Colored points represent individual fruits; 
+                    shapes represent different replicates (plants)." 
+    ) 
+}
+
+# 
+data_temp2019 <- data2019
+y_var2019 <- "pericarp_thickness_inner"
+
+# feed the function with the chosen variable and call the resulting plot "boxplot"
+boxplot2019 <- boxplot_by_acc_fun2019(data_temp2019, y_var2019)
+# add a title to the plot if desired
+boxplot2019 <- boxplot2019 +
+  ggtitle("Summer 2019 data - updated 15 Dec 2020")
+```
+
+View the 2019 plot, with the 2020 plot below for comparison.
+
+```{r, echo=FALSE}
+boxplot2019
+
+boxplot
+```
+
+
+
+
+```{r}
+
+```
+
+```{r, echo=FALSE}
+
+```
+
+
